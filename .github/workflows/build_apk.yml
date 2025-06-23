@@ -8,39 +8,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 🔄 Clonar repositorio
+    - name: 📦 Clonar repositorio
       uses: actions/checkout@v3
 
-    - name: 🛠️ Instalar dependencias del sistema (Ubuntu 24.04 compatible)
+    - name: 🛠 Instalar dependencias del sistema (Ubuntu 24.04 compatible)
       run: |
         sudo apt-get update
         sudo apt-get install -y \
-          python3-pip \
-          git zip unzip openjdk-17-jdk \
+          python3-pip git zip unzip openjdk-17-jdk \
           libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev \
           libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev \
-          zlib1g-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev \
+          libbz2-dev libgstreamer1.0-dev gstreamer1.0-plugins-base \
           libmtdev-dev libgl1-mesa-dev libgles2-mesa-dev \
-          libjpeg-dev libfreetype6-dev libyaml-dev \
-          libx11-dev libxcb1-dev libxrandr-dev libxinerama-dev libxcursor-dev libxi-dev
+          libfreetype6-dev libffi-dev
 
-    - name: 🐍 Instalar Buildozer y dependencias Python
+    - name: 🐍 Instalar dependencias de Python
       run: |
-        python3 -m pip install --upgrade pip
-        pip install --user Cython virtualenv buildozer
+        pip install --upgrade pip
+        pip install buildozer
 
-    - name: ⚙️ Verificar instalación
+    - name: 📁 Compilar APK con Buildozer
       run: |
-        echo "Python version: $(python3 --version)"
-        buildozer --version
-
-    - name: 🚀 Compilar APK
-      run: |
-        export PATH=$PATH:~/.local/bin
         buildozer android debug
 
-    - name: 📦 Subir APK generado como artefacto
+    - name: 📤 Subir APK como artifact
       uses: actions/upload-artifact@v3
       with:
-        name: aviator-apk
+        name: AviatorPredictor-APK
         path: bin/*.apk
