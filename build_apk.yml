@@ -2,48 +2,70 @@ name: Build APK
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v3
+      - name: 📥 Clonar repositorio
+        uses: actions/checkout@v3
 
-    - name: Install system deps
-      run: |
-        sudo apt update
-        sudo apt install -y python3-pip zip unzip openjdk-17-jdk wget
-        pip3 install --upgrade pip
-        pip3 install buildozer Cython
+      - name: 🧰 Instalar dependencias del sistema
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            python3-pip \
+            libncurses5-compat \
+            libtiff-dev \
+            libffi-dev \
+            libsdl2-dev \
+            libsdl2-image-dev \
+            libsdl2-mixer-dev \
+            libsdl2-ttf-dev \
+            libportmidi-dev \
+            libswscale-dev \
+            libavformat-dev \
+            libavcodec-dev \
+            zlib1g-dev \
+            libgstreamer1.0-dev \
+            libgstreamer-plugins-base1.0-dev \
+            libmtdev-dev \
+            libgl1-mesa-dev \
+            libgles2-mesa-dev \
+            libjpeg-dev \
+            libfreetype6-dev \
+            libyaml-dev \
+            libx11-dev \
+            libxcb1-dev \
+            libxrandr-dev \
+            libxinerama-dev \
+            libxcursor-dev \
+            libxi-dev \
+            unzip \
+            openjdk-17-jdk \
+            git \
+            curl \
+            zip
 
-    - name: Accept Android SDK licenses
-      run: |
-        mkdir -p $HOME/.android
-        touch $HOME/.android/repositories.cfg
-        yes | buildozer android accept_license || true
+      - name: 🐍 Instalar Python y herramientas
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install --user Cython virtualenv
 
-    - name: Buildozer init
-      run: buildozer init || true
+      - name: 📦 Instalar buildozer
+        run: |
+          pip install buildozer
 
-    - name: Install Build Tools 33
-      run: |
-        yes | $HOME/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager               "platform-tools" "build-tools;33.0.0" "platforms;android-33"               --sdk_root=$HOME/.buildozer/android/platform/android-sdk || true
+      - name: 🧪 Mostrar versión de buildozer
+        run: buildozer --version
 
-    - name: Validate buildozer.spec
-      run: |
-        if [ ! -f buildozer.spec ]; then
-          echo "buildozer.spec missing" && exit 1
-        fi
+      - name: 🏗️ Construir APK
+        run: |
+          buildozer android debug
 
-    - name: Build APK
-      run: buildozer android debug
-
-    - name: Upload APK artifact
-      uses: actions/upload-artifact@v3
-      with:
-        name: AviatorPredictor-APK
-        path: bin/*.apk
+      - name: 📤 Subir APK generado como artefacto
+        uses: actions/upload-artifact@v3
+        with:
+          name: aviator-apk
+          path: bin/*.apk
