@@ -16,9 +16,8 @@ jobs:
           sudo apt update
           sudo apt install -y \
             python3-pip \
-            libncurses5-compat \
-            libtiff-dev \
             libffi-dev \
+            libtiff-dev \
             libsdl2-dev \
             libsdl2-image-dev \
             libsdl2-mixer-dev \
@@ -31,41 +30,4 @@ jobs:
             libgstreamer1.0-dev \
             libgstreamer-plugins-base1.0-dev \
             libmtdev-dev \
-            libgl1-mesa-dev \
-            libgles2-mesa-dev \
-            libjpeg-dev \
-            libfreetype6-dev \
-            libyaml-dev \
-            libx11-dev \
-            libxcb1-dev \
-            libxrandr-dev \
-            libxinerama-dev \
-            libxcursor-dev \
-            libxi-dev \
-            unzip \
-            openjdk-17-jdk \
-            git \
-            curl \
-            zip
-
-      - name: 🐍 Instalar Python y herramientas
-        run: |
-          python3 -m pip install --upgrade pip
-          pip install --user Cython virtualenv
-
-      - name: 📦 Instalar buildozer
-        run: |
-          pip install buildozer
-
-      - name: 🧪 Mostrar versión de buildozer
-        run: buildozer --version
-
-      - name: 🏗️ Construir APK
-        run: |
-          buildozer android debug
-
-      - name: 📤 Subir APK generado como artefacto
-        uses: actions/upload-artifact@v3
-        with:
-          name: aviator-apk
-          path: bin/*.apk
+            libgl
